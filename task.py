@@ -2,21 +2,32 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-file_path = r'c:\Users\Admin\Downloads\API_SP.POP.TOTL_DS2_en_excel_v2_3401611.xls'  
+file_path = r'c:\Users\Admin\Downloads\API_SP.POP.TOTL_DS2_en_excel_v2_3401611.xls'  # Replace with your actual file path
 df = pd.read_excel(file_path, skiprows=3)  
+
+
 df.columns = df.columns.str.strip()
-print(df.columns)  
-country_name = "India"
-country_data = df[df['Country Name'] == country_name].iloc[:, 4:]  
-country_data = country_data.transpose()
-country_data.columns = ['Population']
-country_data.index.name = 'Year'
-country_data.index = country_data.index.astype(int)
+
+# Select the data for a specific country, e.g., India
+country_name = 'India'
+df_country = df[df['Country Name'] == country_name]
+
+# Transpose the data to make years a separate column
+df_country = df_country.iloc[:, 4:].transpose()  # Select all years' data and transpose
+df_country.columns = ['Population']
+df_country.index.name = 'Year'
+
+# Convert the year index to integers for proper plotting
+df_country.index = df_country.index.astype(int)
+
+# Plotting the population growth over time using a bar plot
 plt.figure(figsize=(10, 6))
-plt.plot(country_data.index, country_data['Population'], marker='o', color='skyblue', linestyle='-')
+plt.bar(df_country.index, df_country['Population'], color='skyblue')
 plt.title(f'Population Growth Over Time in {country_name}')
 plt.xlabel('Year')
 plt.ylabel('Population')
 plt.xticks(rotation=45)
-plt.grid(True)
+plt.grid(axis='y', linestyle='--', linewidth=0.7)
+plt.tight_layout()  # Adjust layout to fit everything nicely
 plt.show()
+
